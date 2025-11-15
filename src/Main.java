@@ -1,4 +1,6 @@
 import java.math.BigInteger;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -52,33 +54,25 @@ public class Main {
         определить самую длинную серию знакоповторений (количество идущих
         подряд чисел одного знака). 0 не является ни положительным, ни
         отрицательным числом и прерывает серию. Число n вводит пользователь.
-
-        Пример:
-        №	    Число	Знак	Длина серии
-        1.		12	    +	    1
-        2.		16	    +	    2
-        3.		9	    +	    3
-        4.		2	    +	    4
-        5.		-7	    -	    1
-        6.		0	    0	    1
-        7.		-17	    -	    1
-        8.		-2	    -	    2
-        9.		5	    +	    1
-        10.		4	    +	    2
-        11.		3	    +	    3
-        12.		2	    +	    4
-        13.		10	    +	    5
-        14.		-6	    -	    1
-        15.		-123	-	    2
-        16.		-89	    -	    3
-        17.		0	    0	    1
-        18.		0	    0	    2
-        19.		9	    +	    1
-        20.		5	    +	    2
-
-        Самая длинная серия: 5
-
     */
+        System.out.println("\nTask 3.");
+        Scanner scanner = new Scanner(System.in);
+        int n = -1;
+        while (n < 0) {
+            System.out.print("Введите количество чисел для генерации: ");
+            try {
+                n = Integer.parseInt(scanner.next());
+                if (n < 0) throw new IllegalArgumentException();
+            } catch (Exception e) {
+                System.out.println("Ошибка! Введите целое неотрицательное " +
+                        "число в int диапазоне.");
+            }
+        }
+        int[] array = generateRandomArray(n, -100, 100);
+        int sequenceLength = getMaxSignumSequenceLength(array);
+        System.out.printf("Максимальная длина последовательности: %s\n",
+                sequenceLength);
+
     /*
         1.4	МЕСЯЦЫ
         Реализуйте класс MonthInfo, который будет выводить информацию о дате,
@@ -209,5 +203,38 @@ public class Main {
         }
         double digits = exponent * Math.log10(base);
         return (int) Math.floor(digits) + 1;
+    }
+
+    public static int[] generateRandomArray(
+            int quantity, int minValue, int maxValue) {
+        Random rand = new Random();
+        int[] randomArray = new int[quantity];
+        for (int i = 0; i < randomArray.length; i++) {
+            randomArray[i] = rand.nextInt(minValue, maxValue + 1);
+        }
+        return randomArray;
+    }
+
+    public static int getMaxSignumSequenceLength(int[] array) {
+        int maxLength = 0;
+        int sequenceStartIndex = 0;
+
+        System.out.printf("%5s | %5s | %6s | %6s |\n",
+                "index", "value", "signum", "length");
+
+        System.out.println("______|_______|________|________|");
+        for (int i = 0; i < array.length; i++){
+            double sign = Math.signum(array[i]);
+            if (sign == Math.signum(array[sequenceStartIndex]) && sign != 0d) {
+                maxLength = Math.max(maxLength, i - sequenceStartIndex + 1);
+            } else {
+                sequenceStartIndex = i;
+            }
+            System.out.printf("%5s | %5s | %6s | %6s |\n",
+                    i, array[i], sign, i - sequenceStartIndex + 1);
+        }
+        System.out.println("______|_______|________|________|");
+
+        return maxLength;
     }
 }
