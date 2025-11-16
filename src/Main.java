@@ -1,4 +1,5 @@
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -95,6 +96,11 @@ public class Main {
         2020-02-12	февраль	2	сб	2020-02-29	29	2020 Q1
 
     */
+        System.out.println("\nTask 4.");
+
+        System.out.println(new MonthInfo(LocalDate.of(2023, 11, 12)));
+        System.out.println(new MonthInfo(LocalDate.of(1900, 1, 1)));
+        System.out.println(new MonthInfo(LocalDate.of(2020, 2, 12)));
     /*
         1.5	ОБРАТНЫЙ ОТСЧЕТ
         Пользователь вводит дату и время какого-то события. Необходимо вывести,
