@@ -1,5 +1,9 @@
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -62,7 +66,7 @@ public class Main {
         while (n < 0) {
             System.out.print("Введите количество чисел для генерации: ");
             try {
-                n = Integer.parseInt(scanner.next());
+                n = Integer.parseInt(scanner.nextLine());
                 if (n < 0) throw new IllegalArgumentException();
             } catch (Exception e) {
                 System.out.println("Ошибка! Введите целое неотрицательное " +
@@ -121,6 +125,51 @@ public class Main {
         •	Добавьте возможность передать дату как аргумент командной строки.
 
     */
+        System.out.println("\nTask 5.");
+        LocalDateTime inputDateTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+
+        if (args.length > 0) {
+            inputDateTime = LocalDateTime.parse(args[0], formatter);
+        }
+        while (Objects.isNull(inputDateTime)) {
+            System.out.print("Введите дату и время (в формате DD.MM.YYYY HH:MM): ");
+            try {
+                inputDateTime = LocalDateTime.parse(scanner.nextLine(), formatter);
+            } catch (Exception e) {
+                System.out.println("Ошибка! Введите корректную дату.");
+            }
+        }
+
+        if (!inputDateTime.isAfter(now)) {
+            System.out.println("Уже наступило!");
+            return;
+        }
+
+        long minutesBetween = ChronoUnit.MINUTES.between(now, inputDateTime);
+
+        long days = minutesBetween / (24 * 60);
+        long hours = (minutesBetween % (24 * 60)) / 60;
+        long minutes = minutesBetween % 60;
+
+        StringBuilder result = new StringBuilder();
+
+        if (days > 0) result.append(days).append(" ")
+                .append(getWordForm(days, "день", "дня", "дней"));
+        if (hours > 0) {
+            if (!result.isEmpty()) result.append(" ");
+            result.append(hours).append(" ")
+                    .append(getWordForm(hours, "час", "часа", "часов"));
+        }
+        if (minutes > 0) {
+            if (!result.isEmpty()) result.append(" ");
+            result.append(minutes).append(" ")
+                    .append(getWordForm(minutes, "минута", "минуты", "минут"));
+        }
+
+        System.out.println(result);
+
     /*
         1.6	СТАТИСТИКА
         Создайте класс ArrayStatistics,
@@ -242,5 +291,16 @@ public class Main {
         System.out.println("______|_______|________|________|");
 
         return maxLength;
+    }
+
+    public static String getWordForm(long n, String form1, String form2, String form5) {
+        if (n % 100 >= 11 && n % 100 <= 14) return form5;
+        switch ((int)(n % 10)) {
+            case 1:  return form1;
+            case 2:
+            case 3:
+            case 4:  return form2;
+            default: return form5;
+        }
     }
 }
