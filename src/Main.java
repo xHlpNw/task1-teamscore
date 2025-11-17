@@ -3,9 +3,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -128,7 +130,6 @@ public class Main {
         System.out.println("\nTask 5.");
         LocalDateTime inputDateTime = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime now = LocalDateTime.now();
 
         if (args.length > 0) {
             inputDateTime = LocalDateTime.parse(args[0], formatter);
@@ -142,50 +143,20 @@ public class Main {
             }
         }
 
-        if (!inputDateTime.isAfter(now)) {
-            System.out.println("Уже наступило!");
-            return;
-        }
-
-        long minutesBetween = ChronoUnit.MINUTES.between(now, inputDateTime);
-
-        long days = minutesBetween / (24 * 60);
-        long hours = (minutesBetween % (24 * 60)) / 60;
-        long minutes = minutesBetween % 60;
-
-        StringBuilder result = new StringBuilder();
-
-        if (days > 0) result.append(days).append(" ")
-                .append(getWordForm(days, "день", "дня", "дней"));
-        if (hours > 0) {
-            if (!result.isEmpty()) result.append(" ");
-            result.append(hours).append(" ")
-                    .append(getWordForm(hours, "час", "часа", "часов"));
-        }
-        if (minutes > 0) {
-            if (!result.isEmpty()) result.append(" ");
-            result.append(minutes).append(" ")
-                    .append(getWordForm(minutes, "минута", "минуты", "минут"));
-        }
-
-        System.out.println(result);
+        System.out.println(getCountdown(inputDateTime));
 
     /*
         1.6	СТАТИСТИКА
         Создайте класс ArrayStatistics,
         который получает массив целых чисел в конструкторе и содержит методы,
         возвращающие статистику по этому массиву:
-        •	мода (mode) — одно или несколько наиболее часто встречающихся
-            значений в массиве;
-        •	медиана (median) — значение, делящее массив пополам (ровно половина
-            значений больше медианы и ровно половина меньше);
+        •	мода (mode);
+        •	медиана (median);
         •	среднее арифметическое (average);
-        •	дисперсия (variance) — сумма квадратов отклонений от среднего
-            арифметического;
+        •	дисперсия (variance);
         •	среднее геометрическое (geometric mean);
         •	перемешивание (shuffle) — возвращает новый массив, содержащий все
-            элементы исходного в случайном порядке (контроль: каждое исходное
-            значение встречается столько же раз, сколько в исходном массиве);
+            элементы исходного в случайном порядке;
         •	выборка (sample) с параметром размера выборки —
             возвращает новый массив, содержащий случайные значения из исходного
             массива (значения могут повторяться, выборка может быть как меньше,
@@ -198,11 +169,23 @@ public class Main {
         •	массив из 3 элементов;
         •	вручную заполненный массив из 10 значений;
         •	массив из 100_000 значений случайных чисел с фиксированным seed.
-        Для выборки и перемешивания проверьте соответсвие контрольным
-        параметрам, и что при повторном вызове они возвращают другой массив.
-        Примечание. Методы shuffle и sample довольно легко реализуются с
-        помощью Random и стандартных методов Arrays.
     */
+
+        System.out.println("\nTask 6.");
+        System.out.println("===Empty array test===");
+        new ArrayStatistics(new int[0]).test(5);
+
+        System.out.println("===One element array test===");
+        new ArrayStatistics(new int[]{ 1987 }).test(5);
+
+        System.out.println("===[ 14, 26, 20 ] test===");
+        new ArrayStatistics(new int[]{ 14, 26, 20 }).test(5);
+
+        System.out.println("===[ 0, 19, 231, 1000, 21, 104, 531, 17, 93, 84 ]===");
+        new ArrayStatistics(new int[]{ 0, 19, 231, 1000, 21, 104, 531, 17, 93, 84 }).test(5);
+
+        System.out.println("===Big random generated array test===");
+        new ArrayStatistics(generateRandomArray(100_000, 0, 1000, 42)).test(5);
     /*
         1.7	СТЕК С ПРИОРИТЕТОМ
         Напишите реализацию обобщённого отсортированного стека с приоритетом:
@@ -270,6 +253,16 @@ public class Main {
         return randomArray;
     }
 
+    public static int[] generateRandomArray(
+            int quantity, int minValue, int maxValue, int seed) {
+        Random rand = new Random(seed);
+        int[] randomArray = new int[quantity];
+        for (int i = 0; i < randomArray.length; i++) {
+            randomArray[i] = rand.nextInt(minValue, maxValue + 1);
+        }
+        return randomArray;
+    }
+
     public static int getMaxSignumSequenceLength(int[] array) {
         int maxLength = 0;
         int sequenceStartIndex = 0;
@@ -293,6 +286,37 @@ public class Main {
         return maxLength;
     }
 
+    public static String getCountdown(LocalDateTime date) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (!date.isAfter(now)) {
+            return "Уже наступило!";
+        }
+
+        long minutesBetween = ChronoUnit.MINUTES.between(now, date);
+
+        long days = minutesBetween / (24 * 60);
+        long hours = (minutesBetween % (24 * 60)) / 60;
+        long minutes = minutesBetween % 60;
+
+        StringBuilder result = new StringBuilder();
+
+        if (days > 0) result.append(days).append(" ")
+                .append(getWordForm(days, "день", "дня", "дней"));
+        if (hours > 0) {
+            if (!result.isEmpty()) result.append(" ");
+            result.append(hours).append(" ")
+                    .append(getWordForm(hours, "час", "часа", "часов"));
+        }
+        if (minutes > 0) {
+            if (!result.isEmpty()) result.append(" ");
+            result.append(minutes).append(" ")
+                    .append(getWordForm(minutes, "минута", "минуты", "минут"));
+        }
+
+        return result.toString();
+    }
+
     public static String getWordForm(long n, String form1, String form2, String form5) {
         if (n % 100 >= 11 && n % 100 <= 14) return form5;
         switch ((int)(n % 10)) {
@@ -303,4 +327,5 @@ public class Main {
             default: return form5;
         }
     }
+
 }
