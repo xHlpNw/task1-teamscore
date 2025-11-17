@@ -201,6 +201,21 @@ public class Main {
             (первого) элемента в стеке.
         •	peek – посмотреть верхнее значение стека, не извлекая его.
     */
+        PriorityStack<String> stack = new PriorityStack<>();
+        stack.push("second", 2);
+        stack.push("first", 3);
+        stack.push("forth", 1);
+        stack.push("third", 1);
+
+        System.out.println("size: " + stack.size());
+        System.out.println("peek: " + stack.peek());
+
+        System.out.println("\npops:");
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+
     }
 
     public static void printRoundingTable(double[] values) {
