@@ -1,5 +1,8 @@
+package models;
+
+import utils.RandomUtils;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ArrayStatistics {
     /*
@@ -11,7 +14,7 @@ public class ArrayStatistics {
     private int[] array;
 
     public ArrayStatistics() {
-        this.array = Main.generateRandomArray(100, -1000, 1000);
+        this.array = RandomUtils.generateRandomArray(100, -1000, 1000);
     }
 
     public ArrayStatistics(int[] array) {
@@ -116,78 +119,23 @@ public class ArrayStatistics {
     //    возвращает новый массив, содержащий случайные значения из исходного
     //    массива.
     public int[] sample(int size) {
+        if (array.length < size) throw new IllegalArgumentException(
+                "Размер выборки не может превышать размер массива.");
         return Arrays.copyOf(shuffle(), size);
     }
 
     // с повтором
     public int[] sampleWithRepeats(int size) {
+        if (array.length == 0) throw new ArrayStoreException(
+                "Невозможно получить выборку из пустого массива!");
+
         int[] sampleArray = new int[size];
         Random rnd = new Random();
-
-        if (array.length == 0) throw new ArrayStoreException("Невозможно получить выборку из пустого массива!");
 
         for (int i = 0; i < sampleArray.length; i++) {
             sampleArray[i] = array[rnd.nextInt(0, array.length)];
         }
 
         return sampleArray;
-    }
-
-    public void test(int sampleSize) {
-        String text = """
-                Modes: %s;
-                Median: %s;
-                Average: %s;
-                Variance: %s;
-                Geometric mean: %s;
-                Shuffled: %s;
-                Sample (%d): %s
-                
-                """;
-
-        String sample;
-        try {
-            sample = Arrays.toString(sampleWithRepeats(sampleSize));
-        } catch (ArrayStoreException e) {
-            sample = e.getMessage();
-        }
-
-        try {
-            sample = Arrays.toString(sampleWithRepeats(sampleSize));
-        } catch (ArrayStoreException e) {
-            sample = e.getMessage();
-        }
-
-        String geometricMean;
-        try {
-            geometricMean = Double.toString(getGeometricMean());
-        } catch (IllegalArgumentException e) {
-            geometricMean = e.getMessage();
-        }
-
-        int[] shuffled = shuffle();
-        int displayLength = Math.min(shuffled.length, 100);
-        StringBuilder shuffledString = new StringBuilder();
-        shuffledString.append("[ ");
-        shuffledString.append(Arrays.stream(shuffled, 0, displayLength)
-                .mapToObj(Integer::toString)
-                .collect(Collectors.joining(", ")));
-        if (array.length > displayLength) {
-            shuffledString.append(", ...");
-        }
-
-        shuffledString.append(" ]");
-
-        System.out.printf(
-                text,
-                getModes().toString(),
-                getMedian(),
-                getAverage(),
-                getVariance(),
-                geometricMean,
-                shuffledString,
-                sampleSize,
-                sample
-                );
     }
 }

@@ -1,3 +1,5 @@
+package models;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -28,6 +30,10 @@ public class MonthInfo {
 
     public MonthInfo(LocalDate date) {
         this.date = date;
+    }
+
+    public LocalDate getDate() {
+        return this.date;
     }
 
     public String getMonthFullName() {
@@ -67,18 +73,5 @@ public class MonthInfo {
         int month = date.getMonthValue();
         int q = (month - 1) / 3 + 1;
         return date.getYear() + " Q" + q;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%10s | %8s | %2d | %2s | %10s | %2d | %2s ",
-                date.toString(),
-                getMonthFullName(),
-                getMonthNumber(),
-                getFirstDayOfWeekShort(),
-                getLastDateOfMonth().toString(),
-                getDaysInMonth(),
-                getQuarter()
-        );
     }
 }

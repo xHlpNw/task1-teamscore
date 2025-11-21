@@ -1,3 +1,5 @@
+package models;
+
 import java.util.EmptyStackException;
 import java.util.Objects;
 
@@ -59,7 +61,6 @@ public class PriorityStack<R> {
         return size;
     }
 
-
     private class Node<T> {
         public T value;
         public int priority;
@@ -70,5 +71,4 @@ public class PriorityStack<R> {
             this.priority = priority;
         }
     }
-
 }
